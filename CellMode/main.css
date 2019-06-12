@@ -2,47 +2,104 @@ h3 {
   margin: 0;
   padding-bottom: 4px;
 }
+
 .section {
   margin-bottom: 16px;
 }
+
 .container {
   background-color: gainsboro;
   display: table;
   margin: 30px auto 0 auto;
   border: 2px solid gray;
 }
+
 .cell {
   width: 28px;
   height: 28px;
   border-left: 1px solid gray;
   border-top: 1px solid gray;
   float: left;
-  /*transition: background-color 1s;*/
 }
+
 .firstcell {
   clear: left;
-  /*border-left: 0 !important;*/
   border-left: 0;
 }
+
 .firstrow {
-  /*border-top: 0 !important;*/
   border-top: 0;
 }
+
 .snake {
   background-color: gray;
-  transition: background-color 1s;
 }
+
 .head {
   border-radius: 18px 18px 0 0;
+  transition: background-color 1s;
 }
+
+.head .left-eye {
+  position: absolute;
+  left: 1px;
+  top: 11px;
+  width: 4px;
+  height: 4px;
+  background-color: yellow;
+  font-size: 16px;
+  border: 3px solid black;
+  border-radius: 50%;
+}
+
+.head .right-eye {
+  position: absolute;
+  left: 16px;
+  top: 11px;
+  width: 4px;
+  height: 4px;
+  background-color: yellow;
+  font-size: 16px;
+  border: 3px solid black;
+  border-radius: 50%;
+}
+
 .tail span{
-  /*background-color: yellow;*/
   width: 0;
   height: 0;
   font-size: 0;
   background-color: gainsboro;
   position: absolute;
 }
+
 .rabbit {
   text-align: center;
+  opacity: 1.0;
+  transition: opacity .5s linear;
+}
+
+.rabbit.started {
+  opacity: 0;
+  transition: opacity 0s linear;
+}
+
+.blink {
+  animation-name: blinker;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  animation-duration: .5s;
+  -webkit-animation-name: blinker;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  -webkit-animation-duration: .5s;
+}
+
+@keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.5; }
+}
+
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.5; }
 }

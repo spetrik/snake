@@ -11,19 +11,16 @@ function onNumberInputValueChanges(min, max, value) {
 }
 
 function onKeyDown(e) {
-  if (e.defaultPrevented) {
-    return;
-  }
   // e.keyCode is deprecated (see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode)
   // e.key for IE are Left/Up/Right/Down
   if (e.key === 'ArrowLeft' || e.key === 'Left') {
-    newDirection = -1;
+    newDirection = 'L';
   } else if (e.key === 'ArrowUp' || e.key === 'Up') {
-    newDirection = -areaSize;
+    newDirection = 'U';
   } else if (e.key === 'ArrowRight' || e.key === 'Right') {
-    newDirection = 1;
+    newDirection = 'R';
   } else if (e.key === 'ArrowDown' || e.key === 'Down') {
-    newDirection = areaSize;
+    newDirection = 'D';
   }
 }
 
@@ -36,18 +33,25 @@ if (document.addEventListener) {
 var SNAKE_LENGTH = 5;
 var TICK_INTERVAL_MS = 500;
 var RABBIT_CHARACTER = '&#x1f407;';
+var bodyBorderRadius = {DR: '0 50% 0 0', DL: '50% 0 0 0', UR: '0 0 50% 0', UL: '0 0 0 50%',
+  RD: '0 0 0 50%', RU: '50% 0 0 0', LD: '0 0 50% 0', LU: '0 50% 0 0'};
+
+var moveStep = { L: -1, U: -10, R: 1, D: 10 };
 var areaSize = 10;
 var snake = [];
-var direction = 1;
-var newDirection = 1;
+var direction = 'R';
+var newDirection = 'R';
 var timerId;
 var containerNode = document.getElementById('container');
 var rabbitCount = 0;
 
 function gameReset() {
+  document.getElementById('isOver').style.display = 'none';
   gameOver();
   areaSize = Number(document.getElementById('areaSize').value);
-  direction = newDirection = 1;
+  direction = newDirection = 'R';
+  moveStep['U'] =  -areaSize;
+  moveStep['D'] =  areaSize;
   rabbitCount = 0;
 
   // Clear container
@@ -71,13 +75,13 @@ function gameReset() {
     containerNode.children[i].classList.add('snake');
   }
   containerNode.children[snake[0]].classList.add('tail');
-  containerNode.children[snake[0]].innerHTML = getTailHtml(1);
-  containerNode.children[snake[snake.length - 1]].classList.add('head');
-  containerNode.children[snake[snake.length - 1]].style.transform = 'rotate(' + getRotation(newDirection) + 'deg)';
+  containerNode.children[snake[0]].innerHTML = getTailHtml('R');
+  drawHead(snake[snake.length - 1], newDirection);
 }
 
 function gameStart() {
   gameReset();
+  document.getElementById('isOver').style.display = 'none';
   createRabbit();
   timerId = setInterval(onTickHandler, TICK_INTERVAL_MS);
   console.log('The game is started', this);
@@ -88,12 +92,13 @@ function gameOver() {
     clearInterval(timerId);
     console.log('The game is over');
     timerId = undefined;
+    document.getElementById('isOver').style.display = '';
   }
 }
 
 function onTickHandler() {
   // check the game over
-  var newCellIndex = snake[snake.length - 1] + newDirection;
+  var newCellIndex = snake[snake.length - 1] + moveStep[newDirection];
   // meet top/bottom border
   var gameOverFlag = newCellIndex < 0 || newCellIndex >= containerNode.children.length;
   if (snake.indexOf(newCellIndex) > -1) {
@@ -102,7 +107,7 @@ function onTickHandler() {
   }
   var newRow = Math.ceil((newCellIndex + 1)/areaSize);
   var currentRow = Math.ceil((snake[snake.length - 1] + 1)/areaSize);
-  if (newRow !== currentRow && Math.abs(newDirection) === 1) {
+  if (newRow !== currentRow && (newDirection === 'L' || newDirection === 'R')) {
     // meet left/right border
     gameOverFlag = true;
   }
@@ -137,37 +142,57 @@ function refreshSnake(changeTail) {
     oldTailElement.innerHTML = '';
     snake.shift();
     // create new tail element
-    var tailDirection = snake[1] - snake[0];
+    var tailDirection = getDirectionFromStep(snake[1] - snake[0]);
     newTailElement.classList.add('tail');
     newTailElement.innerHTML = getTailHtml(tailDirection);
+    // clear radius of snake body
+    var bodyElement = containerNode.children[snake[0]];
+    bodyElement.style.borderRadius = '';
   }
 
-  // remove old header
-  var headerElement = containerNode.children[snake[snake.length -1]];
-  headerElement.classList.remove('head');
-  headerElement.style.transform = '';
-  // create new header
-  var newCellIndex = snake[snake.length -1] + newDirection;
-  // containerNode.children[newCellIndex].classList.add('snake', 'head'); does not work in IE11
-  containerNode.children[newCellIndex].classList.add('snake');
-  containerNode.children[newCellIndex].classList.add('head');
-  containerNode.children[newCellIndex].style.transform = 'rotate(' + getRotation(newDirection) + 'deg)';
-  snake.push(newCellIndex);
+  // redraw head
+  clearHead(snake[snake.length -1]);
+  var newHeadCellIndex = snake[snake.length -1] + moveStep[newDirection];
+  drawHead(newHeadCellIndex, newDirection);
+  snake.push(newHeadCellIndex);
+  if (newDirection !== direction) {
+    var turnElement = containerNode.children[snake[snake.length -2]];
+    turnElement.style.borderRadius = bodyBorderRadius[newDirection + direction];
+  }
   // save current movement direction
   direction = newDirection;
 }
 
+function drawHead(headCellIndex, headDirection) {
+  containerNode.children[headCellIndex].classList.add('snake');
+  containerNode.children[headCellIndex].classList.add('head');
+  containerNode.children[headCellIndex].innerHTML = '<span class="right-eye blink"></span><span class="left-eye blink"></span>';
+  containerNode.children[headCellIndex].style.transform = 'rotate(' + getRotation(headDirection) + 'deg)';
+}
+
+function clearHead(headCellIndex) {
+  var headerElement = containerNode.children[headCellIndex];
+  headerElement.classList.remove('head');
+  headerElement.style.transform = '';
+  headerElement.innerHTML = '';
+}
+
 function createRabbit() {
-  var rabbitIndex = Math.ceil(Math.random() * (areaSize * areaSize - snake.length)) - 1;
+  var rabbitIndexInFreeCells = Math.ceil(Math.random() * (areaSize * areaSize - snake.length)) - 1;
   var freeCells = [];
   for (var i = 0; i < areaSize * areaSize; i++) {
     if (snake.indexOf(i) === -1) {
       freeCells.push(i);
     }
   }
-  var rabbitCell = containerNode.children[freeCells[rabbitIndex]];
+  var rabbitCell = containerNode.children[freeCells[rabbitIndexInFreeCells]];
   rabbitCell.classList.add('rabbit');
+  rabbitCell.classList.add('started');
+  console.log('createRabbit lll', rabbitCell.classList);
   rabbitCell.innerHTML = RABBIT_CHARACTER;
+  setTimeout(function() {
+    rabbitCell.classList.remove('started');
+  }, 100);
   refreshStatus();
 }
 
@@ -178,20 +203,29 @@ function refreshStatus(){
 
 function getRotation(direction) {
   switch (direction) {
-    case 1: return 90;
-    case -1: return -90;
-    case 10: return 180;
+    case 'R': return 90;
+    case 'L': return -90;
+    case 'D': return 180;
   }
-  return 0
+  return 0;
 }
 
 function getTailHtml(direction) {
   switch (direction) {
-    case 1: return '<span style="border-top: 14px solid transparent;border-right: 28px solid gray;border-bottom: 14px solid transparent;"></span>';
-    case -1: return '<span style="border-top: 14px solid transparent;border-left: 28px solid gray;border-bottom: 14px solid transparent;"></span>';
-    case 10: return '<span style="border-left: 14px solid transparent;border-bottom: 28px solid gray;border-right: 14px solid transparent;"></span>';
+    case 'R': return '<span style="border-top: 14px solid transparent;border-right: 28px solid gray;border-bottom: 14px solid transparent;"></span>';
+    case 'L': return '<span style="border-top: 14px solid transparent;border-left: 28px solid gray;border-bottom: 14px solid transparent;"></span>';
+    case 'D': return '<span style="border-left: 14px solid transparent;border-bottom: 28px solid gray;border-right: 14px solid transparent;"></span>';
   }
   return '<span style="border-left: 14px solid transparent;border-top: 28px solid gray;border-right: 14px solid transparent;"></span>';
+}
+
+function getDirectionFromStep(step) {
+  var keys = Object.keys(moveStep);
+  for (var i = 0; i < keys.length; i++) {
+    if (moveStep[keys[i]] === step) {
+      return keys[i];
+    }
+  }
 }
 
 gameReset();
