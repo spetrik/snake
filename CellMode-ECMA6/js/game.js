@@ -20,14 +20,14 @@ export default class Game {
 
   start() {
     this.reset();
-    Constants.IS_OVER_ELEMENT.style.display = 'none';
+    Constants.IS_OVER_ELEMENT.style.visibility = 'hidden';
     this.createRabbit();
     this.timerId = setInterval(() => this.onTickHandler(), Constants.TICK_INTERVAL_MS);
     console.log('The game is started');
   }
 
   reset() {
-    Constants.IS_OVER_ELEMENT.style.display = 'none';
+    Constants.IS_OVER_ELEMENT.style.visibility = 'hidden';
     this.gameOver();
     this.areaSize = Number(Constants.AREA_SIZE_INPUT.value);
     this.direction = 'R';
@@ -58,7 +58,7 @@ export default class Game {
       clearInterval(this.timerId);
       this.timerId = undefined;
       console.log('The game is over');
-      Constants.IS_OVER_ELEMENT.style.display = '';
+      Constants.IS_OVER_ELEMENT.style.visibility = '';
     }
   }
 

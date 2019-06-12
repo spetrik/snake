@@ -46,7 +46,7 @@ var containerNode = document.getElementById('container');
 var rabbitCount = 0;
 
 function gameReset() {
-  document.getElementById('isOver').style.display = 'none';
+  document.getElementById('isOver').style.visibility = 'hidden';
   gameOver();
   areaSize = Number(document.getElementById('areaSize').value);
   direction = newDirection = 'R';
@@ -81,7 +81,7 @@ function gameReset() {
 
 function gameStart() {
   gameReset();
-  document.getElementById('isOver').style.display = 'none';
+  document.getElementById('isOver').style.visibility = 'hidden';
   createRabbit();
   timerId = setInterval(onTickHandler, TICK_INTERVAL_MS);
   console.log('The game is started');
@@ -92,7 +92,7 @@ function gameOver() {
     clearInterval(timerId);
     console.log('The game is over');
     timerId = undefined;
-    document.getElementById('isOver').style.display = '';
+    document.getElementById('isOver').style.visibility = '';
   }
 }
 
