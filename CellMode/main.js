@@ -84,7 +84,7 @@ function gameStart() {
   document.getElementById('isOver').style.display = 'none';
   createRabbit();
   timerId = setInterval(onTickHandler, TICK_INTERVAL_MS);
-  console.log('The game is started', this);
+  console.log('The game is started');
 }
 
 function gameOver() {
@@ -188,7 +188,6 @@ function createRabbit() {
   var rabbitCell = containerNode.children[freeCells[rabbitIndexInFreeCells]];
   rabbitCell.classList.add('rabbit');
   rabbitCell.classList.add('started');
-  console.log('createRabbit lll', rabbitCell.classList);
   rabbitCell.innerHTML = RABBIT_CHARACTER;
   setTimeout(function() {
     rabbitCell.classList.remove('started');

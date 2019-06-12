@@ -96,7 +96,7 @@ function gameStart() {
   gameReset();
   createRabbit();
   timerId = setInterval(onTickHandler, TICK_INTERVAL_MS);
-  console.log('The game is started', this);
+  console.log('The game is started');
 }
 
 function gameOver() {
