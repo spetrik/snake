@@ -1,0 +1,48 @@
+h3 {
+  margin: 0;
+  padding-bottom: 4px;
+}
+.section {
+  margin-bottom: 16px;
+}
+.container {
+  background-color: gainsboro;
+  display: table;
+  margin: 30px auto 0 auto;
+  border: 2px solid gray;
+}
+.cell {
+  width: 28px;
+  height: 28px;
+  border-left: 1px solid gray;
+  border-top: 1px solid gray;
+  float: left;
+  /*transition: background-color 1s;*/
+}
+.firstcell {
+  clear: left;
+  /*border-left: 0 !important;*/
+  border-left: 0;
+}
+.firstrow {
+  /*border-top: 0 !important;*/
+  border-top: 0;
+}
+.snake {
+  background-color: gray;
+  transition: background-color 1s;
+}
+.head {
+  border-radius: 18px 18px 0 0;
+}
+.tail span{
+  /*background-color: yellow;*/
+  width: 0;
+  height: 0;
+  font-size: 0;
+  background-color: gainsboro;
+  position: absolute;
+}
+.rabbit {
+  text-align: center;
+}

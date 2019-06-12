@@ -1,0 +1,62 @@
+h3 {
+  margin: 0;
+  padding-bottom: 4px;
+}
+.section {
+  margin-bottom: 16px;
+}
+.container {
+  background-color: gainsboro;
+  display: table;
+  margin: 30px auto 0 auto;
+  border: 2px solid gray;
+}
+.snake.pre-animation {
+  opacity:0;
+  max-height: 0px;
+}
+.snake span {
+  position: relative;
+  top: -9px;
+  font-size: 40px;
+}
+.cell {
+  width: 28px;
+  height: 28px;
+  border-left: 1px solid gray;
+  border-top: 1px solid gray;
+  float: left;
+}
+.cellnogrid {
+  width: 28px;
+  height: 28px;
+  float: left;
+  transition: background-color 1s;
+}
+.firstcell {
+  clear: left;
+  border-left: 0 !important;
+}
+.firstrow {
+  border-top: 0 !important;
+}
+.snake {
+  transition: all 0.7s;
+  text-align: center;
+}
+.head.dirR span {
+  left: -12px;
+  top: -10px;
+}
+.head.dirL span {
+  left: 12px;
+}
+.head.dirU span {
+  top: 0;
+}
+.head.dirD span {
+  top: -16px;
+}
+.rabbit {
+  text-align: center;
+}
