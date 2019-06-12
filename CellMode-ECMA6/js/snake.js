@@ -48,7 +48,7 @@ export default class Snake {
     this.headElement.classList.add('snake');
     this.headElement.classList.add('head');
     this.headElement.innerHTML = '<span class="right eye blink"></span><span class="left eye blink"></span>';
-    this.headElement.style.transform = 'rotate(' + this.getHeaderStyleRotation(direction) + 'deg)';
+    this.headElement.style.transform = 'rotate(' + Snake.getHeaderStyleRotation(direction) + 'deg)';
   }
 
   deleteHead() {
@@ -57,7 +57,7 @@ export default class Snake {
     this.headElement.innerHTML = '';
   }
 
-  getHeaderStyleRotation(direction) {
+  static getHeaderStyleRotation(direction) {
     switch (direction) {
       case 'R': return 90;
       case 'L': return -90;
@@ -76,13 +76,13 @@ export default class Snake {
 
   drawTail() {
     this.tailElement.classList.add('tail');
-    this.tailElement.innerHTML = this.getTailHtml('R');
+    this.tailElement.innerHTML = Snake.getTailHtml('R');
   }
 
   createTail(tailDirection) {
     const tailElement = Constants.CONTAINER_NODE.children[this.cells[0]];
     tailElement.classList.add('tail');
-    tailElement.innerHTML = this.getTailHtml(tailDirection);
+    tailElement.innerHTML = Snake.getTailHtml(tailDirection);
     tailElement.style.borderRadius = '';
   }
 
@@ -94,7 +94,7 @@ export default class Snake {
     this.cells.shift();
   }
 
-  getTailHtml(direction) {
+  static getTailHtml(direction) {
     switch (direction) {
       case 'R': return '<span style="border-top: 14px solid transparent;border-right: 28px solid gray;border-bottom: 14px solid transparent;"></span>';
       case 'L': return '<span style="border-top: 14px solid transparent;border-left: 28px solid gray;border-bottom: 14px solid transparent;"></span>';
